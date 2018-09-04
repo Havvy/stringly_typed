@@ -1,0 +1,10 @@
+[package]
+name = "stringly_typed_esosyntax"
+version = "0.1.0"
+authors = ["Havvy (Ryan Scheel) <ryan.havvy@gmail.com>"]
+
+[dependencies]
+nom = "4"
+
+[lib]
+proc-macro = true
