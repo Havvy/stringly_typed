@@ -1,6 +1,6 @@
-extern crate stringly_typed_esosyntax;
+extern crate stringly_typed_rust_esosyntax;
 
-use stringly_typed_esosyntax::stringly_typed;
+use stringly_typed_rust_esosyntax::stringly_typed;
 
 stringly_typed!{"'ANSWER'id'i32'ty'42'int"const}
 
