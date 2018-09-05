@@ -1,15 +1,17 @@
-use ::ast::{StringlyTyped, Component};
+use ::ast::{StringlyTyped, RustComponent};
 
-impl<'s> StringlyTyped<'s> {
+type StringlyTypedRust<'s> = StringlyTyped<'s, RustComponent>;
+
+impl<'s> StringlyTypedRust<'s> {
     pub(crate) fn to_rust(&self) -> String {
         match self.component {
-            Component::Const => make_const(self),
+            RustComponent::Const => make_const(self),
             _ => unimplemented!()
         }
     }
 }
 
-fn make_const<'s>(st: &StringlyTyped<'s>) -> String {
+fn make_const<'s>(st: &StringlyTypedRust<'s>) -> String {
     let mut inner_iter = st.unwrap_inners().iter();
 
     let ident = inner_iter.next().unwrap();
