@@ -28,7 +28,7 @@ is not allowed between strings.
 These will be fixed. Maybe.
 
 1. You can only make constants.
-2. The only tags recognized are `id`, `ty`, `int`, and `const`.
+2. The only tags recognized are `id`, `ty`, `int`, `const`, and `static`.
 3. The parser is all crate private. If you want to use it for your own
    nefarious ends, file an issue and I can put it in its own crate.
 
