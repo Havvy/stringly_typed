@@ -1,9 +1,12 @@
 # Stringly Typed Esosyntax
 
 This project is a riff on the term "stringly typed". With this Rust macro, you
-can type your syntax as a sequence of recursive strings.
+can type your syntax as a sequence of recursive strings. Each string is also
+typed (in the type theory sense) with a tag following its closing quote.
 
-## Usage
+## Example
+
+A minimal example of using this crate:
 
 ```rust
 extern crate stringly_typed_rust_esosyntax;
@@ -17,20 +20,46 @@ fn main() {
 }
 ```
 
-A string is either `"inner"tag` or `'inner'tag`. The tag must be known to the
-language. `inner` must either be an alphanumeric string without spaces or it
-must be a sequence of strings that have the other number of quotes than the
-outer level. E.g. for `""tag`, each inner string must be `''tag`. Whitespace
-is not allowed between strings.
+## Syntax
+
+A string is either `"inner"tag` or `'inner'tag`. The tag must be alphanumeric.
+`inner` must either be a string without spaces or it must be a sequence of
+strings of the other number of quotations. Whitespace is not allowed.
+
+> _Tag_ :\
+> &nbsp;&nbsp; `[a-zA-Z0-9]`<sup>+</sup>
+>
+> _DoubleQuoteString_ :\
+> &nbsp;&nbsp; `"` _DoubleQuoteInner_ `"` _Tag_
+>
+> _DoubleQuoteInner_ :\
+> &nbsp;&nbsp; _SingleQuoteString_<sup>+</sup> | _InnerStringDouble_
+>
+> _InnerStringDouble_ :\
+> &nbsp;&nbsp; `[^'"]` `[^"]`<sup>*</sup>
+>
+> _SingleQuoteString_ :\
+> &nbsp;&nbsp; `'` _SingleQuoteInner_ `'` _Tag_
+>
+> _SingleQuoteInner_ :\
+> &nbsp;&nbsp; _DoubleQuoteString_<sup>+</sup> | _InnerStringSingle_
+>
+>
+> _InnerStringSingle_ :\
+> &nbsp;&nbsp; `[^'"]` `[^']`<sup>*</sup>
 
 ## Limitations
 
 These will be fixed. Maybe.
 
-1. You can only make constants.
+1. You can only make constants and statics of ints.
 2. The only tags recognized are `id`, `ty`, `int`, `const`, and `static`.
 3. The parser is all crate private. If you want to use it for your own
    nefarious ends, file an issue and I can put it in its own crate.
+
+## Usage
+
+Why do you want to use this‽ Are you mad‽
 
 ## License
 
