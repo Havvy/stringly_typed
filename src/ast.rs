@@ -50,7 +50,7 @@ impl<'s, Component> StringlyTypedInner<'s, Component> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum RustComponent {
     // Item Types
     Const,
