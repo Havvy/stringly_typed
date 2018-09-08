@@ -35,6 +35,7 @@ impl<'s> StringlyTypedRust<'s> {
         let ident = inner_iter.next().unwrap();
         let ty = inner_iter.next().unwrap();
         let expr = inner_iter.next().unwrap();
+        assert_eq!(inner_iter.next(), None);
 
         format!("static {}: {} = {};", ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
     }
@@ -56,8 +57,11 @@ impl<'s> StringlyTypedRust<'s> {
     /// There's no `expr` component. Instead, a bunch of other components are themselves expression components.
     fn to_expr_string(&self) -> String {
         match self.component {
-            // All literals are expressions.
+            // Literals
             RustComponent::Int => self.to_int_literal_string(),
+
+            // Binary operators
+            RustComponent::Plus => self.to_plus_string(),
 
             // Otherwise, it's not an expression. Error in this case.
             rc => { panic!("Expected expression. Got {:?}.", rc); }
@@ -68,5 +72,15 @@ impl<'s> StringlyTypedRust<'s> {
     fn to_int_literal_string(&self) -> String {
         // TODO(Havvy, 2019-09-08): Validate numeric only.
         self.unwrap_str().to_string()
+    }
+
+    fn to_plus_string(&self) -> String {
+        let mut inner_iter = self.unwrap_inners().iter();
+
+        let lhs = inner_iter.next().unwrap();
+        let rhs = inner_iter.next().unwrap();
+        assert_eq!(inner_iter.next(), None);
+
+        format!("({} + {})", lhs.to_expr_string(), rhs.to_expr_string())
     }
 }

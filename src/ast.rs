@@ -59,6 +59,9 @@ pub(crate) enum RustComponent {
     // Literals
     Int,
 
+    // Binary operators
+    Plus,
+
     // Types
     Type,
 
@@ -77,6 +80,9 @@ impl FromStr for RustComponent {
 
             // Literals
             "int" => RustComponent::Int,
+
+            // Binary operators
+            "plus" => RustComponent::Plus,
 
             // Types
             "ty" => RustComponent::Type,
