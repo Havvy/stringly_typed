@@ -26,7 +26,7 @@ impl<'s> StringlyTypedRust<'s> {
         let ty = inner_iter.next().unwrap();
         let expr = inner_iter.next().unwrap();
 
-        format!("const {}: {} = {};", ident.unwrap_str(), ty.unwrap_str(), expr.to_expr_string())
+        format!("const {}: {} = {};", ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
     }
 
     fn to_static_string(&self) -> String {
@@ -36,7 +36,21 @@ impl<'s> StringlyTypedRust<'s> {
         let ty = inner_iter.next().unwrap();
         let expr = inner_iter.next().unwrap();
 
-        format!("static {}: {} = {};", ident.unwrap_str(), ty.unwrap_str(), expr.to_expr_string())
+        format!("static {}: {} = {};", ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
+    }
+
+    fn to_ty_string(&self) -> String {
+        match self.component {
+            RustComponent::Type => self.to_type_path_string(),
+
+            rc => { panic!("Exprected type. Got {:?}.", rc); }
+        }
+    }
+
+    // Precondition on Self: Component == Type
+    fn to_type_path_string(&self) -> String {
+        // TODO(Havvy, 2019-09-08): Validate. Either inner is Str(ident) or Inners is [Ident, ...].
+        self.unwrap_str().to_string()
     }
 
     /// There's no `expr` component. Instead, a bunch of other components are themselves expression components.
