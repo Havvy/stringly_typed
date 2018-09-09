@@ -3,13 +3,14 @@ use std::str::FromStr;
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct StringlyTyped<'s, Component> {
     pub inner: StringlyTypedInner<'s, Component>,
-    pub component: Component
+    pub component: Component,
+    pub quasi: Option<StringlyTypedInner<'s, Component>>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) enum StringlyTypedInner<'s, Component> {
     Str(&'s str),
-    Inners(Vec<StringlyTyped<'s, Component>>)
+    Inners(Vec<StringlyTyped<'s, Component>>),
 }
 
 impl<'s, Component> StringlyTyped<'s, Component> {
@@ -33,7 +34,8 @@ impl<'s, Component> StringlyTyped<'s, Component> {
     {
         StringlyTyped {
             inner: self.inner.map_components(mapper),
-            component: mapper(self.component)
+            component: mapper(self.component),
+            quasi: self.quasi.map(|sti| sti.map_components(mapper)),
         }
     }
 }

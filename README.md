@@ -4,9 +4,7 @@ This project is a riff on the term "stringly typed". With this Rust macro, you
 can type your syntax as a sequence of recursive strings. Each string is also
 typed (in the type theory sense) with a tag following its closing quote.
 
-## Example
-
-A minimal example of using this crate:
+## Minimal Example
 
 ```rust
 extern crate stringly_typed_rust_esosyntax;
@@ -20,17 +18,25 @@ fn main() {
 }
 ```
 
+See the `examples` directory for more examples, including this one.
+
 ## Syntax
 
 A string is either `"inner"tag` or `'inner'tag`. The tag must be alphanumeric.
-`inner` must either be a string without spaces or it must be a sequence of
-strings of the other number of quotations. Whitespace is not allowed.
+`inner` must either be a string or it must be a sequence of strings of the other
+number of quotations. Whitespace is not allowed.
+
+Strings allow attributes by using quasiquotes after the opening quote. E.g., to
+make a Rust static without name mangling, you'd write it as
+```"`no_mangle`'ANSWER'id'i32'ty'42'int"static```
+
+The full syntax is as shown:
 
 > _Tag_ :\
 > &nbsp;&nbsp; `[a-zA-Z0-9]`<sup>+</sup>
 >
 > _DoubleQuoteString_ :\
-> &nbsp;&nbsp; `"` _DoubleQuoteInner_ `"` _Tag_
+> &nbsp;&nbsp; `"` _QuasiQuote_<sup>?</sup> _DoubleQuoteInner_ `"` _Tag_
 >
 > _DoubleQuoteInner_ :\
 > &nbsp;&nbsp; _SingleQuoteString_<sup>+</sup> | _InnerStringDouble_
@@ -39,14 +45,20 @@ strings of the other number of quotations. Whitespace is not allowed.
 > &nbsp;&nbsp; `[^'"]` `[^"]`<sup>*</sup>
 >
 > _SingleQuoteString_ :\
-> &nbsp;&nbsp; `'` _SingleQuoteInner_ `'` _Tag_
+> &nbsp;&nbsp; `'` _QuasiQuote_<sup>?</sup> _SingleQuoteInner_ `'` _Tag_
 >
 > _SingleQuoteInner_ :\
 > &nbsp;&nbsp; _DoubleQuoteString_<sup>+</sup> | _InnerStringSingle_
 >
->
 > _InnerStringSingle_ :\
 > &nbsp;&nbsp; `[^'"]` `[^']`<sup>*</sup>
+>
+> _QuasiQuote_ :\
+> `` ` `` (\
+> &nbsp;&nbsp; &nbsp;&nbsp; _DoubleQuoteInner_ |\
+> &nbsp;&nbsp; &nbsp;&nbsp; _SingleQuoteInner_ |\
+> &nbsp;&nbsp; &nbsp;&nbsp; ```[^`]```<sup>*</sup>\
+> ) `` ` ``
 
 ## Limitations
 

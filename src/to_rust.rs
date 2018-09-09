@@ -1,8 +1,9 @@
-use ::ast::{StringlyTyped, RustComponent};
+use ::ast::{StringlyTyped, StringlyTypedInner, RustComponent};
 
 /// A StringlyTyped tree that uses Rust's semantics for its components.
 #[allow(dead_code)] // False positive: https://github.com/rust-lang/rust/issues/47131
 type StringlyTypedRust<'s> = StringlyTyped<'s, RustComponent>;
+type Attributes<'s> = Option<StringlyTypedInner<'s, RustComponent>>;
 
 impl<'s> StringlyTypedRust<'s> {
     /// Convert a StringlyTypedRust tree into a string of Rust code.
@@ -26,7 +27,7 @@ impl<'s> StringlyTypedRust<'s> {
         let ty = inner_iter.next().unwrap();
         let expr = inner_iter.next().unwrap();
 
-        format!("const {}: {} = {};", ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
+        format!("{} const {}: {} = {};", to_attributes_string(&self.quasi), ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
     }
 
     fn to_static_string(&self) -> String {
@@ -37,7 +38,7 @@ impl<'s> StringlyTypedRust<'s> {
         let expr = inner_iter.next().unwrap();
         assert_eq!(inner_iter.next(), None);
 
-        format!("static {}: {} = {};", ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
+        format!("{} static {}: {} = {};", to_attributes_string(&self.quasi), ident.unwrap_str(), ty.to_ty_string(), expr.to_expr_string())
     }
 
     fn to_ty_string(&self) -> String {
@@ -82,5 +83,24 @@ impl<'s> StringlyTypedRust<'s> {
         assert_eq!(inner_iter.next(), None);
 
         format!("({} + {})", lhs.to_expr_string(), rhs.to_expr_string())
+    }
+}
+
+fn to_attributes_string(sti: &Attributes<'_>) -> String {
+    match sti {
+        None => "".to_string(),
+        Some(StringlyTypedInner::Str(ref name)) => format!("#[{}]", name),
+        Some(StringlyTypedInner::Inners(_inners)) => unimplemented!("Attributes with metaitems are unimplemented.")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn const_attr() {
+        let st_rust = "\"`no_mangle`'answer'id'i32'ty'42'int\"static";
+        let rust_st = ::parse::parse(st_rust).map_components(|s| s.parse::<::ast::RustComponent>().unwrap()).to_rust_string();
+
+        assert_eq!(rust_st, "#[no_mangle] static answer: i32 = 42;")
     }
 }
