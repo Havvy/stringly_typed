@@ -56,6 +56,7 @@ impl<'s, Component> StringlyTypedInner<'s, Component> {
 pub(crate) enum RustComponent {
     // Item Types
     Const,
+    Mod,
     Static,
 
     // Literals
@@ -63,6 +64,9 @@ pub(crate) enum RustComponent {
 
     // Binary operators
     Plus,
+
+    // Call expr
+    Call,
 
     // Types
     Type,
@@ -78,6 +82,7 @@ impl FromStr for RustComponent {
         Ok(match &*input.to_ascii_lowercase() {
             // Item types
             "const" => RustComponent::Const,
+            "mod" => RustComponent::Mod,
             "static" => RustComponent::Static,
 
             // Literals
@@ -85,6 +90,9 @@ impl FromStr for RustComponent {
 
             // Binary operators
             "plus" => RustComponent::Plus,
+
+            // Call expr
+            "call" => RustComponent::Call,
 
             // Types
             "ty" => RustComponent::Type,
