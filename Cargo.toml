@@ -1,11 +1,5 @@
-[package]
-name = "stringly_typed_rust_esosyntax"
-version = "0.1.0"
-authors = ["Havvy (Ryan Scheel) <ryan.havvy@gmail.com>"]
-license = "MIT OR Apache-2.0"
+[workspace]
 
-[dependencies]
-nom = "4"
-
-[lib]
-proc-macro = true
+members = [
+    "simply_typed_rust_esosyntax",
+]
